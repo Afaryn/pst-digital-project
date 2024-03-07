@@ -1,5 +1,5 @@
 <template>
-  
+  <p>haloooo</p>
 </template>
 
 <script>
