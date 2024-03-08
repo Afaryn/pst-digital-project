@@ -3,7 +3,10 @@
     <NavBar />
 
     <!-- SEARCH BAR -->
-    <SearchComponent @search-updated="handleSearchUpdate" />
+    <SearchComponent
+      @search-updated="handleSearchUpdate"
+      @click="handleButtonClick('table')"
+    />
 
     <!-- FILTER SECTION -->
     <div class="container wrapper">
@@ -22,6 +25,7 @@
             class="active btn btn-outline-secondary m-1"
             id="table-search-tab"
             data-bs-toggle="pill"
+            @click="handleButtonClick('table')"
             data-bs-target="#table-search"
             type="button"
             role="tab"
@@ -41,6 +45,7 @@
             role="tab"
             aria-controls="pub-search"
             aria-selected="false"
+            @click="handleButtonClick('pub')"
           >
             Publikasi
           </button>
@@ -56,6 +61,7 @@
             role="tab"
             aria-controls="news-search"
             aria-selected="false"
+            @click="handleButtonClick('news')"
           >
             Kabar Berita
           </button>
@@ -124,18 +130,12 @@
 
 <script>
 import NavBar from "@/components/NavBar.vue";
-import SearchComponent from "@/components/Search.vue";
-import CardTable from "@/components/CardTable.vue";
-import CardPub from "@/components/CardPub.vue";
-import CardNews from "@/components/CardNews.vue";
+import SearchComponent from "@/components/Search/Search.vue";
+import CardTable from "@/components/Search/CardTable.vue";
+import CardPub from "@/components/Search/CardPub.vue";
+import CardNews from "@/components/Search/CardNews.vue";
 import axios from "axios";
 
-const apiUrl =
-  "https://webapi.bps.go.id/v1/api/list/model/statictable/lang/ind/domain/3500/keyword/";
-const apiUrlPub =
-  "https://webapi.bps.go.id/v1/api/list/model/publication/lang/ind/domain/3500/keyword/";
-const apiUrlNews =
-  "https://webapi.bps.go.id/v1/api/list/model/pressrelease/lang/ind/domain/3500/keyword/";
 const apiKey = "2ad01e6a21b015ea1ff8805ced02600c/";
 
 export default {
@@ -158,95 +158,38 @@ export default {
   methods: {
     async handleSearchUpdate(query) {
       this.searchResult = query;
-      const keyword = query.toString().trim();
-      if (keyword !== "") {
+    },
+    async handleButtonClick(type) {
+      this.searchResult = this.searchResult.trim();
+      if (this.searchResult !== "") {
         try {
-          const encodedQuery = encodeURIComponent(query);
+          const encodedQuery = encodeURIComponent(this.searchResult);
 
-          const table_resp = await axios.get(
-            `${apiUrl}${encodedQuery}/key/${apiKey}`
-          );
-          const resp_result = console.warn(
-            "Table resp",
-            table_resp.data.data[1]
-          );
+          let key, resultType;
 
-          const pub_resp = await axios.get(
-            `${apiUrlPub}${encodedQuery}/key/${apiKey}`
-          );
-          const resp_result1 = console.warn(
-            "Publication resp",
-            pub_resp.data.data[1]
-          );
+          if (type === "table") {
+            key = "statictable";
+            resultType = "resultTable";
+          } else if (type === "pub") {
+            key = "publication";
+            resultType = "resultPub";
+          } else if (type === "news") {
+            key = "pressrelease";
+            resultType = "resultNews";
+          }
 
-          const news_resp = await axios.get(
-            `${apiUrlNews}${encodedQuery}/key/${apiKey}`
+          const response = await axios.get(
+            `https://webapi.bps.go.id/v1/api/list/model/${key}/lang/ind/domain/3500/keyword/${encodedQuery}/key/${apiKey}`
           );
-          const resp_result2 = console.warn(
-            "News resp",
-            news_resp.data.data[1]
-          );
+          console.warn(`${type} resp`, response.data.data[1]);
 
-          this.resultNews = news_resp.data.data[1];
-          this.resultTable = table_resp.data.data[1];
-          this.resultPub = pub_resp.data.data[1];
+          // Use dynamic property to set the result
+          this[resultType] = response.data.data[1];
         } catch (error) {
           console.error("Error during API request:", error);
         }
       }
     },
-    // async handlePublication(query) {
-    //   this.searchResult = query;
-    //   const keyword = query.toString().trim();
-    //   if (keyword !== "") {
-    //     try {
-    //       const encodedQuery = encodeURIComponent(query);
-
-    //       // const table_resp = await axios.get(
-    //       //   `${apiUrl}${encodedQuery}/key/${apiKey}`
-    //       // );
-    //       // const resp_result = console.warn(
-    //       //   "Table resp",
-    //       //   table_resp.data.data[1]
-    //       // );
-
-    //       const pub_resp = await axios.get(
-    //         `${apiUrlPub}${encodedQuery}/key/${apiKey}`
-    //       );
-    //       const resp_result1 = console.warn(
-    //         "Publication resp",
-    //         pub_resp.data.data[1]
-    //       );
-
-    //       // this.resultTable = table_resp.data.data[1];
-    //       this.resultPub = pub_resp.data.data[1];
-    //     } catch (error) {
-    //       console.error("Error during API request:", error);
-    //     }
-    //   }
-    // },
-    // async handleNews(query) {
-    //   this.searchResult = query;
-    //   const keyword = query.toString().trim();
-    //   if (keyword !== "") {
-    //     try {
-    //       const encodedQuery = encodeURIComponent(query);
-
-    //       const news_resp = await axios.get(
-    //         `${apiUrlNews}${encodedQuery}/key/${apiKey}`
-    //       );
-    //       const resp_result2 = console.warn(
-    //         "News resp",
-    //         news_resp.data.data[1]
-    //       );
-
-    //       // this.resultTable = table_resp.data.data[1];
-    //       this.resultNews = news_resp.data.data[1];
-    //     } catch (error) {
-    //       console.error("Error during API request:", error);
-    //     }
-    //   }
-    // },
   },
 };
 </script>
