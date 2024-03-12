@@ -11,62 +11,77 @@
     <!-- FILTER SECTION -->
     <div class="container wrapper">
       <br />
-      <ul
-        class="nav nav-pills mb-3 align-items-center"
-        id="pills-tab"
-        role="tablist"
-      >
-        <i
-          class="bi bi-sliders me-2"
-          style="color: rgba(51, 51, 51, 0.692)"
-        ></i>
-        <li class="nav-item" role="presentation">
-          <button
-            class="active btn btn-outline-secondary m-1"
-            id="table-search-tab"
-            data-bs-toggle="pill"
-            @click="handleButtonClick('table')"
-            data-bs-target="#table-search"
-            type="button"
-            role="tab"
-            aria-controls="table-search"
-            aria-selected="false"
+      <div class="row">
+        <div class="col">
+          <ul
+            class="nav nav-pills mb-3 align-items-center"
+            id="pills-tab"
+            role="tablist"
           >
-            Tabel
-          </button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button
-            class="btn btn-outline-secondary m-1"
-            id="pub-search-tab"
-            data-bs-toggle="pill"
-            data-bs-target="#pub-search"
-            type="button"
-            role="tab"
-            aria-controls="pub-search"
-            aria-selected="false"
-            @click="handleButtonClick('pub')"
-          >
-            Publikasi
-          </button>
-        </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="active btn btn-outline-secondary m-1"
+                id="table-search-tab"
+                data-bs-toggle="pill"
+                @click="handleButtonClick('table')"
+                data-bs-target="#table-search"
+                type="button"
+                role="tab"
+                aria-controls="table-search"
+                aria-selected="false"
+              >
+                Tabel
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="btn btn-outline-secondary m-1"
+                id="pub-search-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#pub-search"
+                type="button"
+                role="tab"
+                aria-controls="pub-search"
+                aria-selected="false"
+                @click="handleButtonClick('pub')"
+              >
+                Publikasi
+              </button>
+            </li>
 
-        <li class="nav-item" role="presentation">
-          <button
-            class="btn btn-outline-secondary m-1"
-            id="news-search-tab"
-            data-bs-toggle="pill"
-            data-bs-target="#news-search"
-            type="button"
-            role="tab"
-            aria-controls="news-search"
-            aria-selected="false"
-            @click="handleButtonClick('news')"
-          >
-            Kabar Berita
-          </button>
-        </li>
-      </ul>
+            <li class="nav-item" role="presentation">
+              <button
+                class="btn btn-outline-secondary m-1"
+                id="news-search-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#news-search"
+                type="button"
+                role="tab"
+                aria-controls="news-search"
+                aria-selected="false"
+                @click="handleButtonClick('news')"
+              >
+                Kabar Berita
+              </button>
+            </li>
+          </ul>
+        </div>
+        <div class="col d-flex justify-content-end align-items-center mb-3">
+          <i
+            class="bi bi-sliders me-2"
+            style="color: rgba(51, 51, 51, 0.692)"
+          ></i>
+          <div class="dropdown-center">
+            <select class="form-select" aria-label="Default select example">
+              <option selected>Wilayah</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div class="clearfix"></div>
       <hr />
 

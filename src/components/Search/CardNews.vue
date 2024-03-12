@@ -17,10 +17,10 @@
             <br />
             <p class="card-text">{{ item.abstract }}</p>
             <div class="row">
-              <div class="col align-self-start">
+              <div class="col">
                 <small>Release: {{ item.rl_date }}</small>
               </div>
-              <div class="col align-self-end mt-auto">
+              <div class="col d-flex justify-content-end">
                 <a
                   :href="item.pdf"
                   class="btn btn-primary mx-1"
