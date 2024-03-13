@@ -12,7 +12,7 @@
     <div class="container wrapper">
       <br />
       <div class="row">
-        <div class="col">
+        <div class="col-sm-12 col-md-8">
           <ul
             class="nav nav-pills mb-3 align-items-center"
             id="pills-tab"
@@ -66,17 +66,29 @@
             </li>
           </ul>
         </div>
-        <div class="col d-flex justify-content-end align-items-center mb-3">
+        <div
+          class="col d-flex justify-content-start align-items-center mb-3 ms-2"
+        >
           <i
             class="bi bi-sliders me-2"
             style="color: rgba(51, 51, 51, 0.692)"
           ></i>
-          <div class="dropdown-center">
-            <select class="form-select" aria-label="Default select example">
-              <option selected>Wilayah</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+
+          <!-- FILTER SELECT REGION -->
+          <d3>Wilayah:</d3>
+          <div class="ms-2 dropdown-center">
+            <select
+              class="form-select"
+              v-model="selectedRegion"
+              aria-label="Default select example"
+            >
+              <option
+                v-for="(region, index) in regions"
+                :key="index"
+                :value="region.value"
+              >
+                {{ region.label }}
+              </option>
             </select>
           </div>
         </div>
@@ -165,48 +177,103 @@ export default {
   data() {
     return {
       searchResult: "",
-      resultTable: {},
-      resultPub: {},
-      resultNews: {},
+      resultTable: [],
+      resultPub: [],
+      resultNews: [],
+      key: "",
+      resultType: "resultTable",
+      selectedRegion: "3500", // Set default value to "Jawa Timur"
+      regions: [
+        { label: "Jawa Timur", value: "3500" },
+        { label: "Kab. Bangkalan", value: "3526" },
+        { label: "Kab. Banyuwangi", value: "3510" },
+        { label: "Kab. Blitar", value: "3505" },
+        { label: "Kab. Bojonegoro", value: "3522" },
+        { label: "Kab. Bondowoso", value: "3511" },
+        { label: "Kab. Gresik", value: "3525" },
+        { label: "Kab. Jember", value: "3509" },
+        { label: "Kab. Jombang", value: "3517" },
+        { label: "Kab. Kediri", value: "3506" },
+        { label: "Kab. Lamongan", value: "3524" },
+        { label: "Kab. Lumajang", value: "3508" },
+        { label: "Kab. Madiun", value: "3519" },
+        { label: "Kab. Magetan", value: "3520" },
+        { label: "Kab. Malang", value: "3507" },
+        { label: "Kab. Mojokerto", value: "3516" },
+        { label: "Kab. Nganjuk", value: "3518" },
+        { label: "Kab. Ngawi", value: "3521" },
+        { label: "Kab. Pacitan", value: "3501" },
+        { label: "Kab. Pamekasan", value: "3528" },
+        { label: "Kab. Pasuruan", value: "3514" },
+        { label: "Kab. Ponorogo", value: "3502" },
+        { label: "Kab. Probolinggo", value: "3513" },
+        { label: "Kab. Sampang", value: "3527" },
+        { label: "Kab. Sidoarjo", value: "3515" },
+        { label: "Kab. Situbondo", value: "3512" },
+        { label: "Kab. Sumenep", value: "3529" },
+        { label: "Kab. Trenggalek", value: "3503" },
+        { label: "Kab. Tuban", value: "3523" },
+        { label: "Kab. Tulungagung", value: "3504" },
+        { label: "Kota Batu", value: "3579" },
+        { label: "Kota Blitar", value: "3572" },
+        { label: "Kota Kediri", value: "3571" },
+        { label: "Kota Madiun", value: "3577" },
+        { label: "Kota Malang", value: "3573" },
+        { label: "Kota Mojokerto", value: "3576" },
+        { label: "Kota Pasuruan", value: "3575" },
+        { label: "Kota Probolinggo", value: "3574" },
+        { label: "Kota Surabaya", value: "3578" },
+      ],
+      loading: false, // Initialize loading state
     };
+  },
+  watch: {
+    selectedRegion: function (newRegion, oldRegion) {
+      this.loading = false;
+      this.makeApiCall(this.key, newRegion);
+    },
   },
   methods: {
     async handleSearchUpdate(query) {
-      this.searchResult = query;
+      this.searchResult = query.trim();
     },
     async handleButtonClick(type) {
-      this.searchResult = this.searchResult.trim();
-      if (this.searchResult !== "") {
+      if (this.searchResult) {
         try {
-          const encodedQuery = encodeURIComponent(this.searchResult);
-
-          let key, resultType;
-
           if (type === "table") {
-            key = "statictable";
-            resultType = "resultTable";
+            this.key = "statictable";
+            this.resultType = "resultTable";
           } else if (type === "pub") {
-            key = "publication";
-            resultType = "resultPub";
+            this.key = "publication";
+            this.resultType = "resultPub";
           } else if (type === "news") {
-            key = "pressrelease";
-            resultType = "resultNews";
+            this.key = "pressrelease";
+            this.resultType = "resultNews";
           }
-
-          const response = await axios.get(
-            `https://webapi.bps.go.id/v1/api/list/model/${key}/lang/ind/domain/3500/keyword/${encodedQuery}/key/${apiKey}`
-          );
-          console.warn(`${type} resp`, response.data.data[1]);
-
-          // Use dynamic property to set the result
-          this[resultType] = response.data.data[1];
+          this.loading = true;
+          this.makeApiCall(this.key, this.selectedRegion);
         } catch (error) {
+          this.loading = false;
           console.error("Error during API request:", error);
         }
+      }
+    },
+    async makeApiCall(key, region) {
+      try {
+        const encodedQuery = encodeURIComponent(this.searchResult);
+        const response = await axios.get(
+          `https://webapi.bps.go.id/v1/api/list/model/${key}/lang/ind/domain/${region}/keyword/${encodedQuery}/key/${apiKey}`
+        );
+        console.warn(`${key} resp`, response.data.data[1]);
+
+        this[this.resultType] = response.data.data[1];
+        this.loading = false;
+      } catch (error) {
+        console.error("Error during API request:", error);
+        this.loading = false;
       }
     },
   },
 };
 </script>
-
 <style></style>
