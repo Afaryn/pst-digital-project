@@ -97,8 +97,22 @@
       <div class="clearfix"></div>
       <hr />
 
+      <!-- LOADING STATE -->
+      <div v-if="loading" class="text-center mb-3">
+        <p>Loading...</p>
+        <img src="../assets/loading.gif" height="75" width="75" />
+      </div>
+
+      <div v-else>
+        <p class="mb-3">Hasil Pencarian : {{ searchResult }}</p>
+        <div
+          v-if="resultNews == null || resultPub == null || resultTable == null"
+        >
+          <p>Maaf, data tidak tersedia.</p>
+        </div>
+      </div>
+
       <!-- HASIL PENCARIAN -->
-      <p>Hasil Pencarian : {{ searchResult }}</p>
       <div class="tab-content" id="pills-tabContent">
         <div
           class="tab-pane fade"
@@ -111,9 +125,6 @@
             <div v-for="pub in resultPub" :key="pub.pub_id">
               <CardPub :item="pub" :keyword="searchResult" />
             </div>
-          </div>
-          <div v-else>
-            <p>Maaf, data tidak tersedia.</p>
           </div>
         </div>
         <div
@@ -128,9 +139,9 @@
               <CardTable :item="table" />
             </div>
           </div>
-          <div v-else>
+          <!-- <div v-else>
             <p>Maaf, data tidak tersedia.</p>
-          </div>
+          </div> -->
         </div>
         <div
           class="tab-pane fade"
@@ -144,9 +155,9 @@
               <CardNews :item="news" />
             </div>
           </div>
-          <div v-else>
+          <!-- <div v-else>
             <p>Maaf, data tidak tersedia.</p>
-          </div>
+          </div> -->
         </div>
       </div>
 
@@ -229,16 +240,25 @@ export default {
   },
   watch: {
     selectedRegion: function (newRegion, oldRegion) {
-      this.loading = false;
+      // this.resultNews = [];
+      // this.resultPub = [];
+      // this.resultTable = [];
+      this.loading = true;
       this.makeApiCall(this.key, newRegion);
     },
   },
   methods: {
     async handleSearchUpdate(query) {
       this.searchResult = query.trim();
+      this.resultNews = [];
+      this.resultPub = [];
+      this.resultTable = [];
     },
     async handleButtonClick(type) {
       if (this.searchResult) {
+        this.resultNews = [];
+        this.resultPub = [];
+        this.resultTable = [];
         try {
           if (type === "table") {
             this.key = "statictable";
@@ -271,6 +291,9 @@ export default {
       } catch (error) {
         console.error("Error during API request:", error);
         this.loading = false;
+        this.resultNews = [];
+        this.resultPub = [];
+        this.resultTable = [];
       }
     },
   },
