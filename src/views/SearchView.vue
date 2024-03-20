@@ -5,7 +5,7 @@
     <!-- SEARCH BAR -->
     <SearchComponent
       @search-updated="handleSearchUpdate"
-      @click="handleButtonClick('table')"
+      @click="handleButtonSearch"
     />
 
     <!-- FILTER SECTION -->
@@ -191,6 +191,7 @@ export default {
       resultTable: [],
       resultPub: [],
       resultNews: [],
+      activeTab: "",
       key: "",
       resultType: "resultTable",
       selectedRegion: "3500", // Set default value to "Jawa Timur"
@@ -240,9 +241,9 @@ export default {
   },
   watch: {
     selectedRegion: function (newRegion, oldRegion) {
-      // this.resultNews = [];
-      // this.resultPub = [];
-      // this.resultTable = [];
+      this.resultNews = [];
+      this.resultPub = [];
+      this.resultTable = [];
       this.loading = true;
       this.makeApiCall(this.key, newRegion);
     },
@@ -296,7 +297,35 @@ export default {
         this.resultTable = [];
       }
     },
+    async handleButtonSearch() {
+      this.handleButtonClick("table");
+      this.activeTab = "table";
+    },
   },
+//   async mounted() {
+//   // Get data from local storage
+//   const savedSearchResult = localStorage.getItem('searchResult');
+//   const savedResultTable = localStorage.getItem('resultTable');
+//   const savedResultPub = localStorage.getItem('resultPub');
+//   const savedResultNews = localStorage.getItem('resultNews');
+
+//   if (savedSearchResult) {
+//     this.searchResult = JSON.parse(savedSearchResult);
+//   }
+
+//   if (savedResultTable) {
+//     this.resultTable = JSON.parse(savedResultTable);
+//   }
+
+//   if (savedResultPub) {
+//     this.resultPub = JSON.parse(savedResultPub);
+//   }
+
+//   if (savedResultNews) {
+//     this.resultNews = JSON.parse(savedResultNews);
+//   }
+// },
+
 };
 </script>
 <style></style>
