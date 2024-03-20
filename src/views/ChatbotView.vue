@@ -6,6 +6,7 @@
       <div class="d-none d-md-block">
         <div class="row">
           <div class="col-md-3 sidebar d-block">
+            <!-- Sidebar content -->
             <p>Layanan Chatbot</p>
             <img
               src="../assets/images/image-chatbot.png"
@@ -31,7 +32,7 @@
           <div class="col-md-9 ml-3 d-block">
             <div class="main-content-wrapper">
               <div class="main-content px-3 py-4">
-                <div class="chat-main-content">
+                <div class="chat-main-content" ref="chatContent">
                   <div class="row center mt-3">
                     <div class="col">
                       <div
@@ -41,6 +42,7 @@
                           'text-start': msg.owner === 'chatbot',
                           'text-end': msg.owner === 'user',
                         }"
+                        class="message-item"
                       >
                         <div class="d-flex align-items-center">
                           <img v-if="msg.owner === 'chatbot'" src="../assets/images/logo_pst_light.png" alt="Chatbot Avatar" class="avatar ms-2" />
@@ -81,7 +83,8 @@
   <div class="d-sm-block d-md-none">
     <div class="row">
       <div class="col-md-9 main-content d-flex flex-column">
-        <div class="chat-main-content">
+        <div class="main-content-wrapper">
+          <div class="chat-main-content"  >
           <div class="row center mt-3 ">
             <div class="col-md-12">
               <div
@@ -103,6 +106,8 @@
             </div>
           </div>
         </div>
+        </div>
+
         <div class="input-group mt-3">
           <input
             type="text"
@@ -136,6 +141,7 @@ export default {
     return {
       message: "",
       messages: [
+        // Initial messages
         {
           text: "Selamat datang di Chatbot PST DIGITAL, ada yang bisa saya bantu?",
           owner: "chatbot",
@@ -153,7 +159,11 @@ export default {
     sendMessage() {
       if (this.message.trim() !== "") {
         this.messages.push({ text: this.message, owner: "user" });
-        //menambahkan logika untuk mengirim pesan ke chatbot dan menerima respons
+        // Scroll otomatis ke bawah setiap kali pesan baru dikirimkan
+        this.$nextTick(() => {
+          const chatContent = this.$refs.chatContent;
+          chatContent.scrollTop = chatContent.scrollHeight;
+        });
         this.message = "";
       }
     },
@@ -161,7 +171,9 @@ export default {
 };
 </script>
 
+
 <style scoped>
+/* Existing styles */
 .container {
   width: 100%;
   max-width: 2000px;
@@ -171,7 +183,7 @@ export default {
 .sidebar {
   background-color: #f5f5f5;
   padding: 20px;
-  height: auto;
+  /* height: auto; */
 }
 
 .main-content-wrapper {
@@ -191,7 +203,9 @@ export default {
   border-radius: 10px;
   background-color: #007bff;
   color: white;
+  max-width: 50vw;
   margin: 5px;
+  text-align: left;
 }
 
 .text-start .bubble {
@@ -217,17 +231,36 @@ export default {
   height: calc(100% - 50px);
   overflow-x: hidden;
     overflow-y: scroll;
-    overflow-anchor: unset;
+    /* overflow-anchor: unset; */
+}
+.chat-main-content::-webkit-scrollbar {
+  width: 3px; /* Ubah ukuran lebar scrollbar di sini */
+  
 }
 
 .avatar {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .bubble-right {
   margin-left: auto;
+}
+.message-item {
+  opacity: 0;
+  animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
