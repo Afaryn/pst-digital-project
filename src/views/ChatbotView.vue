@@ -1,123 +1,159 @@
 <template>
   <div>
-    <NavBar />
-    <div class="container">
-      <!-- Desktop -->
-      <div class="d-none d-md-block">
-        <div class="row">
-          <div class="col-md-3 sidebar d-block">
-            <p>Layanan Chatbot</p>
-            <img
-              src="../assets/images/image-chatbot.png"
-              style="width: 25vh; height: auto"
-              class="img-fluid d-block"
-              alt="Image"
-            />
-            <div class="my-2">
-              <div class="sidebar-text">
-                <i class="bi bi-question-circle"></i> FAQ
+    <div>
+      <NavBar />
+      <div class="container">
+        <!-- Desktop -->
+        <div class="d-none d-md-block">
+          <div class="row">
+            <div class="col-md-3 sidebar d-block">
+              <p>Layanan Chatbot</p>
+              <img
+                src="../assets/images/image-chatbot.png"
+                style="width: 25vh; height: auto"
+                class="img-fluid d-block"
+                alt="Image"
+              />
+              <div class="my-2">
+                <div class="sidebar-text">
+                  <i class="bi bi-question-circle"></i> FAQ
+                </div>
+              </div>
+              <div class="d-grid gap-2">
+                <a href="#" class="btn btn-outline-secondary btn-sm"
+                  >komoditas perkebunan 2023</a
+                >
+                <a href="#" class="btn btn-outline-secondary btn-sm"
+                  >pertumbuhan ekonomi 2023</a
+                >
+                <a href="#" class="btn btn-outline-secondary btn-sm"
+                  >stunting</a
+                >
               </div>
             </div>
-            <div class="d-grid gap-2">
-              <a href="#" class="btn btn-outline-secondary btn-sm"
-                >komoditas perkebunan 2023</a
-              >
-              <a href="#" class="btn btn-outline-secondary btn-sm"
-                >pertumbuhan ekonomi 2023</a
-              >
-              <a href="#" class="btn btn-outline-secondary btn-sm">stunting</a>
-            </div>
-          </div>
-          <div class="col-md-9 ml-3 d-block">
-            <div class="main-content-wrapper">
-              <div class="main-content px-3 py-4">
-                <div class="chat-main-content">
-                  <div class="row center mt-3">
-                    <div class="col">
-                      <div
-                        v-for="(msg, index) in messages"
-                        :key="index"
-                        :class="{
-                          'text-start': msg.owner === 'chatbot',
-                          'text-end': msg.owner === 'user',
-                        }"
-                      >
-                        <div class="d-flex align-items-center">
-                          <img v-if="msg.owner === 'chatbot'" src="../assets/images/logo_pst_light.png" alt="Chatbot Avatar" class="avatar ms-2" />
-                          <div :class="['bubble', {'bubble-right': msg.owner === 'user'}]" :style="{ width: 100 }">
-                            {{ msg.text }}
+            <div class="col-md-9 ml-3 d-block">
+              <div class="main-content-wrapper">
+                <div class="main-content px-3 py-4">
+                  <div class="chat-main-content">
+                    <div class="row center mt-3">
+                      <div class="col">
+                        <div
+                          v-for="(msg, index) in messages"
+                          :key="index"
+                          :class="{
+                            'text-start': msg.owner === 'chatbot',
+                            'text-end': msg.owner === 'user',
+                          }"
+                        >
+                          <div class="d-flex align-items-center">
+                            <img
+                              v-if="msg.owner === 'chatbot'"
+                              src="../assets/images/logo_pst_light.png"
+                              alt="Chatbot Avatar"
+                              class="avatar ms-2"
+                            />
+                            <div
+                              :class="[
+                                'bubble',
+                                { 'bubble-right': msg.owner === 'user' },
+                              ]"
+                              :style="{ width: 100 }"
+                            >
+                              {{ msg.text }}
+                            </div>
+                            <i
+                              v-if="msg.owner === 'user'"
+                              class="bi bi-person-circle me-2"
+                              style="font-size: 30px; color: #727272"
+                            ></i>
                           </div>
-                          <i v-if="msg.owner === 'user'" class="bi bi-person-circle me-2" style="font-size: 30px; color: #727272;"></i>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="input-group position-absolute bottom-0 start-0 w-100 mb-3">
-                <input
-                  type="text"
-                  class="form-control me-2 rounded-3"
-                  placeholder="Tulis pesan..."
-                  v-model="message"
-                  @keyup.enter="sendMessage"
-                />
-                <button
-                  class="btn btn-secondary rounded-3"
-                  type="button"
-                  @click="sendMessage"
+                <div
+                  class="input-group position-absolute bottom-0 start-0 w-100 mb-3"
                 >
-                  <i class="bi bi-send"></i>
-                </button>
+                  <input
+                    type="text"
+                    class="form-control me-2 rounded-3"
+                    placeholder="Tulis pesan..."
+                    v-model="message"
+                    @keyup.enter="sendMessage"
+                  />
+                  <button
+                    class="btn btn-secondary rounded-3"
+                    type="button"
+                    @click="sendMessage"
+                  >
+                    <i class="bi bi-send"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Mobile -->
-  <div class="d-sm-block d-md-none">
-    <div class="row">
-      <div class="col-md-9 main-content d-flex flex-column">
-        <div class="chat-main-content">
-          <div class="row center mt-3 ">
-            <div class="col-md-12">
-              <div
-                v-for="(msg, index) in messages"
-                :key="index"
-                :class="{
-                  'text-start': msg.owner === 'chatbot',
-                  'text-end': msg.owner === 'user',
-                }"
-              >
-                <div class="d-flex align-items-center">
-                  <img v-if="msg.owner === 'chatbot'" src="../assets/images/logo_pst_light.png" alt="Chatbot Avatar" class="avatar ms-2" />
-                  <div :class="['bubble', {'bubble-right': msg.owner === 'user'}]" :style="{ width: 100}">
-                    {{ msg.text }}
+    <!-- Mobile -->
+    <div class="d-sm-block d-md-none">
+      <div class="row">
+        <div class="col-md-9 main-content d-flex flex-column">
+          <div class="chat-main-content">
+            <div class="row center mt-3">
+              <div class="col-md-12">
+                <div
+                  v-for="(msg, index) in messages"
+                  :key="index"
+                  :class="{
+                    'text-start': msg.owner === 'chatbot',
+                    'text-end': msg.owner === 'user',
+                  }"
+                >
+                  <div class="d-flex align-items-center">
+                    <img
+                      v-if="msg.owner === 'chatbot'"
+                      src="../assets/images/logo_pst_light.png"
+                      alt="Chatbot Avatar"
+                      class="avatar ms-2"
+                    />
+                    <div
+                      :class="[
+                        'bubble',
+                        { 'bubble-right': msg.owner === 'user' },
+                      ]"
+                      :style="{ width: 100 }"
+                    >
+                      {{ msg.text }}
+                    </div>
+                    <i
+                      v-if="msg.owner === 'user'"
+                      class="bi bi-person-circle me-2"
+                      style="font-size: 30px; color: #727272"
+                    ></i>
                   </div>
-                  <i v-if="msg.owner === 'user'" class="bi bi-person-circle me-2" style="font-size: 30px; color: #727272;"></i>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="input-group mt-3">
-          <input
-            type="text"
-            class="form-control me-2 rounded-3"
-            placeholder="Tulis pesan..."
-            v-model="message"
-            @keyup.enter="sendMessage"
-          />
-          <button
-            class="btn btn-secondary rounded-3"
-            type="button"
-            @click="sendMessage"
-          >
-            <i class="bi bi-send"></i>
-          </button>
+          <div class="input-group mt-3">
+            <input
+              type="text"
+              class="form-control me-2 rounded-3"
+              placeholder="Tulis pesan..."
+              v-model="message"
+              @keyup.enter="sendMessage"
+            />
+            <button
+              class="btn btn-secondary rounded-3"
+              type="button"
+              @click="sendMessage"
+            >
+              <i class="bi bi-send"></i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -164,7 +200,7 @@ export default {
 <style scoped>
 .container {
   width: 100%;
-  max-width: 2000px;
+  max-width: 100vw;
   margin: 0 auto;
 }
 
@@ -195,8 +231,7 @@ export default {
 }
 
 .text-start .bubble {
-  background-color: #007bffad/* Warna untuk pesan chatbot */
-  
+  background-color: #007bffad; /* Warna untuk pesan chatbot */
 }
 
 .text-end .bubble {
@@ -216,8 +251,8 @@ export default {
 .chat-main-content {
   height: calc(100% - 50px);
   overflow-x: hidden;
-    overflow-y: scroll;
-    overflow-anchor: unset;
+  overflow-y: scroll;
+  overflow-anchor: unset;
 }
 
 .avatar {
