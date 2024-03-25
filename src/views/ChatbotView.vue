@@ -21,10 +21,14 @@
             </div>
             <!--membuat isi FAQ-->
             <div class="d-grid gap-2">
-              <button v-for="(faq, index) in faqs" :key="index" class="btn btn-outline-secondary btn-sm" @click="sendFAQ(faq)">
+              <button
+                v-for="(faq, index) in faqs"
+                :key="index"
+                class="btn btn-outline-secondary btn-sm"
+                @click="sendFAQ(faq)"
+              >
                 {{ faq }}
               </button>
-
             </div>
           </div>
           <div class="col-md-9 ml-3 d-block">
@@ -93,70 +97,70 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Mobile -->
-    <div class="d-sm-block d-md-none">
-      <div class="row">
-        <div class="col-md-9 main-content d-flex flex-column">
-          <div class="main-content-wrapper">
-            <div class="chat-main-content">
-              <div class="row center mt-3">
-                <div class="col-md-12">
-                  <div
-                    v-for="(msg, index) in messages"
-                    :key="index"
-                    :class="{
-                      'text-start': msg.owner === 'chatbot',
-                      'text-end': msg.owner === 'user',
-                    }"
-                  >
-                    <div class="d-flex align-items-center">
-                      <img
-                        v-if="msg.owner === 'chatbot'"
-                        src="../assets/images/logo_pst_light.png"
-                        alt="Chatbot Avatar"
-                        class="avatar ms-2"
-                      />
-                      <div
-                        :class="[
-                          'bubble',
-                          { 'bubble-right': msg.owner === 'user' },
-                        ]"
-                        :style="{ width: 100 }"
-                      >
-                        {{ msg.text }}
-                      </div>
-                      <i
-                        v-if="msg.owner === 'user'"
-                        class="bi bi-person-circle me-2"
-                        style="font-size: 30px; color: #727272"
-                      ></i>
+  <div class="d-sm-block d-md-none">
+    <div class="row">
+      <div class="col-md-9 main-content d-flex flex-column">
+        <div class="main-content-wrapper">
+          <div class="chat-main-content">
+            <div class="row center mt-3">
+              <div class="col-md-12">
+                <div
+                  v-for="(msg, index) in messages"
+                  :key="index"
+                  :class="{
+                    'text-start': msg.owner === 'chatbot',
+                    'text-end': msg.owner === 'user',
+                  }"
+                >
+                  <div class="d-flex align-items-center">
+                    <img
+                      v-if="msg.owner === 'chatbot'"
+                      src="../assets/images/logo_pst_light.png"
+                      alt="Chatbot Avatar"
+                      class="avatar ms-2"
+                    />
+                    <div
+                      :class="[
+                        'bubble',
+                        { 'bubble-right': msg.owner === 'user' },
+                      ]"
+                      :style="{ width: 100 }"
+                    >
+                      {{ msg.text }}
                     </div>
+                    <i
+                      v-if="msg.owner === 'user'"
+                      class="bi bi-person-circle me-2"
+                      style="font-size: 30px; color: #727272"
+                    ></i>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-  
-          <div class="input-group mt-3">
-            <input
-              type="text"
-              class="form-control me-2 rounded-3"
-              placeholder="Tulis pesan..."
-              v-model="message"
-              @keyup.enter="sendMessage"
-            />
-            <button
-              class="btn btn-secondary rounded-3"
-              type="button"
-              @click="sendMessage"
-            >
-              <i class="bi bi-send"></i>
-            </button>
-          </div>
+        </div>
+
+        <div class="input-group mt-3">
+          <input
+            type="text"
+            class="form-control me-2 rounded-3"
+            placeholder="Tulis pesan..."
+            v-model="message"
+            @keyup.enter="sendMessage"
+          />
+          <button
+            class="btn btn-secondary rounded-3"
+            type="button"
+            @click="sendMessage"
+          >
+            <i class="bi bi-send"></i>
+          </button>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -176,18 +180,12 @@ export default {
           text: "Selamat datang di Chatbot PST DIGITAL, ada yang bisa saya bantu?",
           owner: "chatbot",
         }, // contoh pesan chatbot
-        {
-          text: "Saya ingin informasi tentang kemiskinan di tahun 2023",
-          owner: "user",
-        }, // contoh pesan pengguna
-        { text: "Tentu, tunggu sebentar...", owner: "chatbot" }, // contoh pesan chatbot
-        // menambahkan pesan-pesan lainnya di sini
       ],
       faqs: [
         "Publikasi pertanian di Jawa Timur",
         "Data Kemisikinan di Jawa Timur",
-        "stunting"
-      ]
+        "stunting",
+      ],
     };
   },
   methods: {
@@ -199,12 +197,32 @@ export default {
           const chatContent = this.$refs.chatContent;
           chatContent.scrollTop = chatContent.scrollHeight;
         });
+        this.sendBotResponse(this.message); // Send a response from the bot
         this.message = "";
       }
     },
     sendFAQ(faqText) {
       this.messages.push({ text: faqText, owner: "user" });
-    }
+      this.sendBotResponse(faqText); // Send a response from the bot
+    },
+    sendBotResponse(message) {
+      // implementasi respon chatbot
+      // contohnya untuk memanggil API
+      const response = "Berikut ini adalah hasil pencarian dari " + message;
+      // mengatur waktu respon
+      setTimeout(() => {
+        this.messages.push({ text: response, owner: "chatbot" });
+        this.$nextTick(() => {
+          const chatContent = this.$refs.chatContent;
+          chatContent.scrollTop = chatContent.scrollHeight;
+        });
+      }, 1000);
+
+      this.$nextTick(() => {
+        const chatContent = this.$refs.chatContent;
+        chatContent.scrollTop = chatContent.scrollHeight;
+      });
+    },
   },
 };
 </script>
