@@ -27,7 +27,7 @@
                 class="btn btn-outline-secondary btn-sm"
                 @click="sendFAQ(faq)"
               >
-                {{ faq }}
+                {{ faq.button }}
               </button>
             </div>
           </div>
@@ -182,10 +182,19 @@ export default {
         }, // contoh pesan chatbot
       ],
       faqs: [
-        "Publikasi pertanian di Jawa Timur",
-        "Data Kemisikinan di Jawa Timur",
-        "stunting",
+        // "Publikasi pertanian di Jawa Timur",
+        // "Data Kemisikinan di Jawa Timur",
+        // "stunting",
+        {button: "Publikasi Pertanian Di Jawa Timur",
+        type:"publication",keyword :"pertanian"},
+        {button: "Data Kemisikinan di Jawa Timur",
+        type:"statictable",keyword:"kemiskinan"},
+        {button: "stunting",
+        type:"pressrelease",keyword:"stunting"},
       ],
+      resultTable: {},
+      resultPub: {},
+      resultNews: {},
     };
   },
   methods: {
@@ -202,9 +211,50 @@ export default {
       }
     },
     sendFAQ(faqText) {
-      this.messages.push({ text: faqText, owner: "user" });
-      this.sendBotResponse(faqText); // Send a response from the bot
+      this.messages.push({ text: faqText.button, owner: "user" });
+      this.getData(faqText)
+      this.sendBotResponse(faqText.button); // Send a response from the bot
     },
+    async getData(faq){
+      
+      const keyword = faq.keyword.toString().trim();
+      if (keyword !== "") {
+        try {
+          const encodedQuery = encodeURIComponent(query);
+
+          const table_resp = await axios.get(
+            `${apiUrl}${encodedQuery}/key/${apiKey}`
+          );
+          const resp_result = console.warn(
+            "Table resp",
+            table_resp.data.data[1]
+          );
+
+          const pub_resp = await axios.get(
+            `${apiUrlPub}${encodedQuery}/key/${apiKey}`
+          );
+          const resp_result1 = console.warn(
+            "Publication resp",
+            pub_resp.data.data[1]
+          );
+
+          const news_resp = await axios.get(
+            `${apiUrlNews}${encodedQuery}/key/${apiKey}`
+          );
+          const resp_result2 = console.warn(
+            "News resp",
+            news_resp.data.data[1]
+          );
+
+          this.resultNews = news_resp.data.data[1];
+          this.resultTable = table_resp.data.data[1];
+          this.resultPub = pub_resp.data.data[1];
+        } catch (error) {
+          console.error("Error during API request:", error);
+        }
+    }
+    }
+    ,
     sendBotResponse(message) {
       // implementasi respon chatbot
       // contohnya untuk memanggil API
